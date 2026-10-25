@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BoardsBuddy — Your Board Exams, Made Easier | Maharashtra State Board Class 10</title>
+  <meta name="description" content="Free comprehensive learning platform for Maharashtra State Board Class 10 students. Textbooks, notes, formula sheets, previous year question papers (PYQs), and step-by-step solutions for Mathematics and Science.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Design System -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <!-- Official Supabase Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-logo" id="header-brand-logo">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <span>BoardsBuddy</span>
+        <span class="brand-badge">SSC 10</span>
+      </a>
+
+      <div class="header-actions">
+        <!-- Board & Class Selector Pill -->
+        <a href="pages/select.html" class="board-class-pill" id="board-class-switcher-pill" title="Switch Board or Class">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          <span id="header-board-class-text">Maharashtra Board • Class 10</span>
+        </a>
+
+        <!-- Global Search Trigger -->
+        <button class="header-search-btn" id="header-search-btn" title="Search study materials (Ctrl + K)">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Search...</span>
+          <kbd class="kbd-shortcut">Ctrl K</kbd>
+        </button>
+
+        <!-- Light/Dark Mode Toggle -->
+        <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
+        <!-- Dynamic User Auth Buttons Container -->
+        <div class="header-actions" id="header-user-actions">
+          <a href="pages/auth.html#login" class="btn btn-sm btn-ghost" id="login-nav-btn">Login</a>
+          <a href="pages/auth.html#signup" class="btn btn-sm btn-primary" id="signup-nav-btn">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section (Wireframe 1) -->
+  <main>
+    <section class="hero-section">
+      <div class="hero-glow"></div>
+
+      <div class="hero-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>100% Free for Maharashtra Board SSC Students</span>
+      </div>
+
+      <h1 class="hero-title">
+        Your Board Exams, <span class="gradient-text">Made Easier.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Textbooks, Notes, Short Notes and PYQs — all in one place. Master Mathematics and Science with verified syllabus materials, formula sheets, and solved previous papers.
+      </p>
+
+      <div class="hero-actions">
+        <a href="pages/select.html" class="btn btn-lg btn-primary" id="get-started-btn">
+          <span>Get Started</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="pages/textbooks.html" class="btn btn-lg btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <span>Explore Textbooks</span>
+        </a>
+      </div>
+
+      <!-- Feature Grid -->
+      <div class="main-container" style="padding-bottom: 0;">
+        <div class="features-grid">
+          <!-- 1. Textbooks -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper" style="background: rgba(79, 70, 229, 0.1); color: var(--primary-600);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <h3>Official Textbooks</h3>
+            <p>Access official Balbharati e-textbooks for Class 10 Mathematics Parts 1 & 2 and Science & Technology Parts 1 & 2 directly in your browser.</p>
+            <a href="pages/textbooks.html" class="btn btn-sm btn-outline" style="margin-top: 1rem;">View Textbooks &rarr;</a>
+          </div>
+
+          <!-- 2. Comprehensive Notes -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper" style="background: rgba(6, 182, 212, 0.1); color: #0891b2;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <h3>Chapter-Wise Notes</h3>
+            <p>Structured, verified revision notes written strictly according to the latest SSC syllabus with definitions, derivations, and practice sets.</p>
+            <a href="pages/notes.html" class="btn btn-sm btn-outline" style="margin-top: 1rem;">Read Notes &rarr;</a>
+          </div>
+
+          <!-- 3. Short Notes -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper" style="background: rgba(245, 158, 11, 0.1); color: #d97706;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <h3>Quick Formula Sheets</h3>
+            <p>1-page cheat sheets containing all vital mathematical formulas, laws of gravitation, periodic trends, and reaction equations for rapid exam revision.</p>
+            <a href="pages/short-notes.html" class="btn btn-sm btn-outline" style="margin-top: 1rem;">Formula Sheets &rarr;</a>
+          </div>
+
+          <!-- 4. PYQs Papers -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper" style="background: rgba(16, 185, 129, 0.1); color: #059669;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <h3>Year-Wise PYQ Papers</h3>
+            <p>Complete original board question papers from 2020 to 2024 (March & July sessions) with marks distribution and time guidelines.</p>
+            <a href="pages/pyqs.html" class="btn btn-sm btn-outline" style="margin-top: 1rem;">Browse Papers &rarr;</a>
+          </div>
+
+          <!-- 5. Chapterwise PYQs -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper" style="background: rgba(139, 92, 246, 0.1); color: #7c3aed;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </div>
+            <h3>Chapterwise Questions</h3>
+            <p>Master high-yield questions sorted by chapter and mark weightage (1 mark, 2 marks, 3 marks, 4 marks) to target your weak spots.</p>
+            <a href="pages/chapterwise-pyqs.html" class="btn btn-sm btn-outline" style="margin-top: 1rem;">Chapterwise PYQs &rarr;</a>
+          </div>
+
+          <!-- 6. PYQ Solutions -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper" style="background: rgba(236, 72, 153, 0.1); color: #db2777;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <h3>Step-by-Step Solutions</h3>
+            <p>Detailed model answers with step-by-step mathematical working, formulas, diagrams, and marking scheme rubrics written by expert teachers.</p>
+            <a href="pages/pyq-solutions.html" class="btn btn-sm btn-outline" style="margin-top: 1rem;">Explore Solutions &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <span>BoardsBuddy</span>
+        </a>
+        <p>Your comprehensive board exam learning platform. Empowering students with verified study materials, textbooks, notes, and solved PYQs.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Study Resources</h4>
+        <ul class="footer-links">
+          <li><a href="pages/textbooks.html">Textbooks</a></li>
+          <li><a href="pages/notes.html">Chapter Notes</a></li>
+          <li><a href="pages/short-notes.html">Short Notes & Formulas</a></li>
+          <li><a href="pages/pyqs.html">Previous Year Papers</a></li>
+          <li><a href="pages/chapterwise-pyqs.html">Chapterwise PYQs</a></li>
+          <li><a href="pages/pyq-solutions.html">PYQ Solutions</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Subjects</h4>
+        <ul class="footer-links">
+          <li><a href="pages/notes.html?subject=MATH1">Mathematics Part 1 (Algebra)</a></li>
+          <li><a href="pages/notes.html?subject=MATH2">Mathematics Part 2 (Geometry)</a></li>
+          <li><a href="pages/notes.html?subject=SCI1">Science & Technology Part 1</a></li>
+          <li><a href="pages/notes.html?subject=SCI2">Science & Technology Part 2</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Account & Admin</h4>
+        <ul class="footer-links">
+          <li><a href="pages/auth.html#login">Student Login</a></li>
+          <li><a href="pages/auth.html#signup">Create Account</a></li>
+          <li><a href="pages/select.html">Change Board/Class</a></li>
+          <li><a href="admin/login.html" style="color: var(--danger-500); font-weight: 600;">Admin Portal</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>&copy; 2026 BoardsBuddy. Designed for Maharashtra Board Class 10 Students.</div>
+      <div>Engineered with HTML5, CSS3, ES6+ & Supabase.</div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/data/mock-seed.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/services/auth.js"></script>
+  <script src="js/services/db.js"></script>
+  <script src="js/utils/ui.js"></script>
+</body>
+</html>

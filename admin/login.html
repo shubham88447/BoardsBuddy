@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal Login — BoardsBuddy</title>
+  <meta name="robots" content="noindex, nofollow">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--bg-body); padding: 1.5rem;">
+
+  <!-- Admin Login Card -->
+  <div class="selection-card" style="max-width: 440px; border-top: 4px solid var(--danger-500); box-shadow: var(--shadow-xl);">
+    
+    <div class="selection-card-header" style="margin-bottom: 1.5rem;">
+      <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: var(--radius-md); background: rgba(239, 68, 68, 0.1); color: var(--danger-500); margin-bottom: 1rem;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+        <h2 style="font-size: 1.5rem;">BoardsBuddy</h2>
+        <span class="admin-badge">Admin</span>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">
+        Restricted Portal. Authorized administrator access only. All actions are authenticated and audited.
+      </p>
+    </div>
+
+    <form id="admin-login-form">
+      <div class="form-group">
+        <label for="admin-email" class="form-label">Administrator Email</label>
+        <input type="email" id="admin-email" class="form-control" placeholder="admin@boardsbuddy.com" required autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label for="admin-password" class="form-label">Password</label>
+        <input type="password" id="admin-password" class="form-control" placeholder="••••••••••••" required autocomplete="current-password">
+      </div>
+
+      <div id="admin-error-box" class="form-error hidden" style="margin-bottom: 1.25rem; padding: 0.75rem; background: var(--danger-50); border-radius: var(--radius-sm); border: 1px solid #fecaca; text-align: left;"></div>
+
+      <button type="submit" id="admin-login-btn" class="btn btn-primary btn-lg" style="width: 100%; background: linear-gradient(135deg, #dc2626, #b91c1c);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <span>Authorize & Enter</span>
+      </button>
+
+      <div style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-muted); text-align: center;">
+        <a href="../index.html" style="color: var(--text-muted);">&larr; Return to Student Site</a>
+      </div>
+    </form>
+  </div>
+
+  <div style="margin-top: 2rem; max-width: 440px; font-size: 0.8rem; color: var(--text-muted); text-align: center; line-height: 1.5;">
+    <strong>Setup Note for Owner:</strong> To assign the admin role to your Supabase account, execute the SQL snippet in <code>supabase/schema.sql</code> or run <code>insert into public.user_roles (user_id, role) values ('YOUR_USER_ID', 'admin');</code> in the Supabase SQL editor.
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/data/mock-seed.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/services/auth.js"></script>
+  <script src="../js/services/db.js"></script>
+  <script src="../js/utils/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Check if already authenticated as admin
+      const isAdmin = await AuthService.checkIsAdmin();
+      if (isAdmin) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const form = document.getElementById('admin-login-form');
+      const errorBox = document.getElementById('admin-error-box');
+      const submitBtn = document.getElementById('admin-login-btn');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorBox.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.querySelector('span').textContent = 'Verifying Authorization...';
+
+        const email = document.getElementById('admin-email').value;
+        const password = document.getElementById('admin-password').value;
+
+        try {
+          await AuthService.signIn(email, password);
+          const authorized = await AuthService.checkIsAdmin();
+
+          if (!authorized) {
+            await AuthService.signOut();
+            throw new Error('Access Denied: This account does not possess verified administrator permissions in the database.');
+          }
+
+          UI.showToast('Admin authorized successfully! Entering dashboard...', 'success');
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 400);
+
+        } catch (err) {
+          errorBox.textContent = err.message || 'Authentication failed. Please check credentials.';
+          errorBox.classList.remove('hidden');
+          submitBtn.disabled = false;
+          submitBtn.querySelector('span').textContent = 'Authorize & Enter';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
