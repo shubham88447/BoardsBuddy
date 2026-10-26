@@ -1,0 +1,22 @@
+{
+  "name": "boards-buddy",
+  "version": "1.0.0",
+  "description": "BoardsBuddy — Complete Board Exam Learning Platform for Maharashtra State Board Class 10",
+  "main": "serve.js",
+  "scripts": {
+    "start": "node serve.js",
+    "dev": "node serve.js"
+  },
+  "keywords": [
+    "education",
+    "maharashtra-board",
+    "ssc-class-10",
+    "textbooks",
+    "notes",
+    "pyq",
+    "solutions",
+    "supabase"
+  ],
+  "author": "BoardsBuddy Team",
+  "license": "MIT"
+}

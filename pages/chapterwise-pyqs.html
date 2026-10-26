@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapterwise PYQs — Class 10 Maharashtra Board | BoardsBuddy</title>
+  <meta name="description" content="Previous-year board exam questions grouped chapter-wise by marks (1 mark, 2 marks, 3 marks, 4 marks) for Class 10 Mathematics and Science.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../index.html" class="brand-logo">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <span>BoardsBuddy</span>
+        <span class="brand-badge">SSC 10</span>
+      </a>
+
+      <div class="header-actions">
+        <a href="select.html" class="board-class-pill" title="Change Board or Class">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          <span id="header-board-class-text">Maharashtra Board • Class 10</span>
+        </a>
+
+        <button class="header-search-btn" title="Search study materials (Ctrl + K)">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Search...</span>
+          <kbd class="kbd-shortcut">Ctrl K</kbd>
+        </button>
+
+        <button class="theme-toggle-btn" aria-label="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
+        <div id="header-user-actions"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Horizontal Navigation Tabs Bar -->
+  <div id="study-nav-placeholder"></div>
+
+  <!-- Main Content Container -->
+  <main class="main-container">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="../index.html">Home</a>
+      <span class="separator">/</span>
+      <a href="select.html">Class 10 (SSC)</a>
+      <span class="separator">/</span>
+      <span class="current">Chapterwise PYQs</span>
+    </nav>
+
+    <div class="page-header">
+      <h1>Chapterwise Previous-Year Questions</h1>
+      <p>Target chapter-by-chapter mastery. Review all board exam questions categorized by chapter, marks weightage, and examination year.</p>
+    </div>
+
+    <!-- Subject Selector Filter Bar (Wireframe 8) -->
+    <div class="subject-filter-bar">
+      <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+        <label for="ch-pyqs-subject-dropdown" class="font-semibold" style="font-size: 0.95rem;">Select Subject:</label>
+        <select id="ch-pyqs-subject-dropdown" class="form-select" style="width: auto; min-width: 280px;">
+          <option value="">-- Choose a Subject --</option>
+        </select>
+      </div>
+
+      <div class="subject-pills-group" id="ch-pyqs-pills-container"></div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="ch-pyqs-loading" class="text-center text-muted hidden" style="padding: 3rem 0;">
+      <p>Loading chapterwise questions...</p>
+    </div>
+
+    <!-- Chapterwise Questions List Container (Wireframe 8) -->
+    <div id="ch-pyqs-container"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../index.html" class="brand-logo">
+          <div class="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <span>BoardsBuddy</span>
+        </a>
+        <p>Chapterwise previous year questions with mark distribution.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Study Tabs</h4>
+        <ul class="footer-links">
+          <li><a href="textbooks.html">Textbooks</a></li>
+          <li><a href="notes.html">Notes</a></li>
+          <li><a href="short-notes.html">Short Notes</a></li>
+          <li><a href="chapterwise-pyqs.html">Chapterwise PYQs</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Subjects</h4>
+        <ul class="footer-links">
+          <li><a href="chapterwise-pyqs.html?subject=MATH1">Mathematics Part 1</a></li>
+          <li><a href="chapterwise-pyqs.html?subject=MATH2">Mathematics Part 2</a></li>
+          <li><a href="chapterwise-pyqs.html?subject=SCI1">Science Part 1</a></li>
+          <li><a href="chapterwise-pyqs.html?subject=SCI2">Science Part 2</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Admin</h4>
+        <ul class="footer-links">
+          <li><a href="../admin/login.html">Admin Portal</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/data/mock-seed.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/services/auth.js"></script>
+  <script src="../js/services/db.js"></script>
+  <script src="../js/utils/ui.js"></script>
+  <script src="../js/pages/chapterwise-pyqs.js"></script>
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — BoardsBuddy</title>
+  <meta name="robots" content="noindex, nofollow">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="admin-body">
+
+  <!-- Admin Sidebar Navigation -->
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar-header">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <div class="brand-icon" style="background: linear-gradient(135deg, #dc2626, #b91c1c); width: 32px; height: 32px; font-size: 1rem;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <span style="font-weight: 800; font-size: 1.15rem;">BoardsBuddy</span>
+      </div>
+      <span class="admin-badge">Admin</span>
+    </div>
+
+    <nav class="admin-nav">
+      <button class="admin-nav-item active" data-tab="overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Overview</span>
+      </button>
+
+      <button class="admin-nav-item" data-tab="boards">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        <span>Boards & Classes</span>
+      </button>
+
+      <button class="admin-nav-item" data-tab="subjects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>Subjects</span>
+      </button>
+
+      <button class="admin-nav-item" data-tab="chapters">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        <span>Chapters</span>
+      </button>
+
+      <button class="admin-nav-item" data-tab="content">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Content Manager</span>
+      </button>
+
+      <button class="admin-nav-item" data-tab="uploads">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>Upload Manager</span>
+      </button>
+
+      <button class="admin-nav-item" data-tab="preview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>Live Preview</span>
+      </button>
+    </nav>
+
+    <div class="admin-sidebar-footer">
+      <a href="../pages/textbooks.html" target="_blank" class="btn btn-sm btn-outline" style="width: 100%; margin-bottom: 0.5rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        <span>Open Student Site</span>
+      </a>
+      <button id="admin-logout-btn" class="btn btn-sm btn-ghost" style="width: 100%; color: var(--danger-500);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Log Out</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Admin Main Content Area -->
+  <main class="admin-main">
+    
+    <!-- Top Bar -->
+    <header class="admin-topbar">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button id="admin-menu-toggle" class="btn btn-sm btn-secondary mobile-sidebar-toggle" style="display: none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h2 id="admin-page-title" style="font-size: 1.25rem;">Overview Dashboard</h2>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <!-- Theme Toggle -->
+        <button class="theme-toggle-btn" aria-label="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
+        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem;">
+          <span class="status-dot" style="background: var(--success-500);"></span>
+          <span id="admin-user-email">Admin</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Views Container -->
+    <div class="admin-content-view">
+      
+      <!-- =====================================================================
+           TAB 1: Overview
+           ===================================================================== -->
+      <section id="tab-overview" class="admin-tab-pane active">
+        <!-- KPI Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(79, 70, 229, 0.1); color: var(--primary-600);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div class="stat-info">
+              <h4>Total Subjects</h4>
+              <div class="stat-value" id="stat-total-subjects">4</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(6, 182, 212, 0.1); color: #0891b2;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </div>
+            <div class="stat-info">
+              <h4>Total Chapters</h4>
+              <div class="stat-value" id="stat-total-chapters">33</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success-600);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="stat-info">
+              <h4>Total Resources</h4>
+              <div class="stat-value" id="stat-total-resources">0</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #d97706;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="stat-info">
+              <h4>Published / Drafts</h4>
+              <div class="stat-value" id="stat-published-drafts">0 / 0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Uploads & Activity -->
+        <div class="table-container">
+          <div class="table-header-bar">
+            <div>
+              <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">Recently Added Materials</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Latest study content published or saved as draft.</p>
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="Admin.switchTab('content')">Manage All Content &rarr;</button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Resource Title</th>
+                <th>Category</th>
+                <th>Subject</th>
+                <th>Status</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody id="overview-recent-table-body">
+              <tr><td colspan="5" class="text-center text-muted">Loading recent content...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           TAB 2: Manage Boards & Classes
+           ===================================================================== -->
+      <section id="tab-boards" class="admin-tab-pane">
+        <div class="table-container">
+          <div class="table-header-bar">
+            <div>
+              <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">Curriculum Boards & Classes</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Manage education boards and active supported classes.</p>
+            </div>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Board Name</th>
+                <th>Code</th>
+                <th>Supported Classes</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="boards-table-body">
+              <!-- Rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           TAB 3: Manage Subjects
+           ===================================================================== -->
+      <section id="tab-subjects" class="admin-tab-pane">
+        <div class="table-container">
+          <div class="table-header-bar">
+            <div>
+              <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">Manage Subjects</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Class 10 subjects mapped to Maharashtra State Board.</p>
+            </div>
+            <button class="btn btn-sm btn-primary" id="add-subject-btn">+ Add New Subject</button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Subject Name</th>
+                <th>Code</th>
+                <th>Color / Icon</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="subjects-table-body">
+              <!-- Rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           TAB 4: Manage Chapters
+           ===================================================================== -->
+      <section id="tab-chapters" class="admin-tab-pane">
+        <!-- Subject Filter for Chapters -->
+        <div class="subject-filter-bar" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <label for="admin-chapter-subject-filter" class="font-semibold" style="font-size: 0.9rem;">Filter by Subject:</label>
+            <select id="admin-chapter-subject-filter" class="form-select" style="width: auto; min-width: 260px;"></select>
+          </div>
+          <button class="btn btn-sm btn-primary" id="add-chapter-btn">+ Add Chapter</button>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header-bar">
+            <h3 style="font-size: 1.1rem;">Chapters List</h3>
+            <span class="badge badge-primary" id="admin-chapters-count">0 Chapters</span>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Ch #</th>
+                <th>Chapter Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="chapters-table-body">
+              <!-- Rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           TAB 5: Content Manager
+           ===================================================================== -->
+      <section id="tab-content" class="admin-tab-pane">
+        <!-- Content Filter Bar -->
+        <div class="subject-filter-bar">
+          <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <div>
+              <label for="admin-content-type-filter" class="font-semibold" style="font-size: 0.85rem; margin-right: 0.35rem;">Type:</label>
+              <select id="admin-content-type-filter" class="form-select" style="width: auto;">
+                <option value="">All Types</option>
+                <option value="textbook">Textbook</option>
+                <option value="notes">Notes</option>
+                <option value="short_notes">Short Notes</option>
+                <option value="pyq">PYQ</option>
+                <option value="chapterwise_pyq">Chapterwise PYQ</option>
+                <option value="pyq_solution">PYQ Solution</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="admin-content-subject-filter" class="font-semibold" style="font-size: 0.85rem; margin-right: 0.35rem;">Subject:</label>
+              <select id="admin-content-subject-filter" class="form-select" style="width: auto; min-width: 200px;">
+                <option value="">All Subjects</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="create-resource-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Create New Study Resource</span>
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Subject</th>
+                <th>Chapter</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="resources-table-body">
+              <!-- Rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           TAB 6: Upload Manager (Storage)
+           ===================================================================== -->
+      <section id="tab-uploads" class="admin-tab-pane">
+        <!-- Upload Dropzone Card -->
+        <div class="solution-box" style="margin-bottom: 2rem;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Upload PDFs, Worksheets & Images</h3>
+          <p class="text-muted" style="margin-bottom: 1.5rem; font-size: 0.9rem;">
+            Upload study files directly to Supabase Storage. Supported types: PDF, PNG, JPG, WEBP. Maximum file size: 25 MB.
+          </p>
+
+          <div class="dropzone" id="upload-dropzone">
+            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📁</div>
+            <h4 style="font-size: 1.1rem; margin-bottom: 0.35rem;">Drag & drop your PDF or image here</h4>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1rem;">or click to browse from your device</p>
+            <input type="file" id="file-input-picker" accept=".pdf,image/png,image/jpeg,image/webp" style="display: none;">
+            <button type="button" class="btn btn-secondary" onclick="document.getElementById('file-input-picker').click()">
+              Browse Local Files
+            </button>
+          </div>
+
+          <!-- Progress -->
+          <div id="upload-progress-wrapper" class="hidden" style="margin-top: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600;">
+              <span id="uploading-file-name">Uploading file...</span>
+              <span id="upload-progress-percent">0%</span>
+            </div>
+            <div class="upload-progress-bar">
+              <div class="upload-progress-fill" id="admin-upload-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Uploaded Files Log -->
+        <div class="table-container">
+          <div class="table-header-bar">
+            <h3 style="font-size: 1.1rem;">Recently Uploaded Files in Storage</h3>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Type</th>
+                <th>Size</th>
+                <th>Storage URL</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="uploads-table-body">
+              <tr><td colspan="5" class="text-center text-muted">Upload a file above to view it in the storage manager.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           TAB 7: Content Preview (Live Simulation)
+           ===================================================================== -->
+      <section id="tab-preview" class="admin-tab-pane">
+        <div class="solution-box" style="margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Live Student Experience Simulator</h3>
+          <p class="text-muted" style="font-size: 0.9rem;">
+            Preview how your published resources appear inside the student-facing Study Content Viewer before public announcement.
+          </p>
+        </div>
+
+        <div style="border: 1px solid var(--border-default); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-surface);">
+          <iframe id="admin-preview-iframe" src="../pages/viewer.html" style="width: 100%; height: 750px; border: none;" title="Student Preview"></iframe>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- =====================================================================
+       MODAL 1: Resource Editor Dialog (Create / Edit)
+       ===================================================================== -->
+  <dialog id="resource-modal" class="modal" style="max-width: 680px;">
+    <div class="modal-header">
+      <h3 id="resource-modal-title">Create Study Resource</h3>
+      <button class="btn btn-sm btn-ghost" onclick="document.getElementById('resource-modal').close()">&times;</button>
+    </div>
+    <form id="resource-modal-form">
+      <input type="hidden" id="res-edit-id">
+      
+      <div class="modal-body">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <!-- Resource Type -->
+          <div class="form-group">
+            <label for="res-type-select" class="form-label">Resource Type *</label>
+            <select id="res-type-select" class="form-select" required>
+              <option value="textbook">TextBook</option>
+              <option value="notes" selected>Notes</option>
+              <option value="short_notes">Short Notes</option>
+              <option value="pyq">PYQ (Year Paper)</option>
+              <option value="chapterwise_pyq">Chapterwise PYQ</option>
+              <option value="pyq_solution">PYQ Solution</option>
+            </select>
+          </div>
+
+          <!-- Subject -->
+          <div class="form-group">
+            <label for="res-subject-select" class="form-label">Subject *</label>
+            <select id="res-subject-select" class="form-select" required></select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
+          <!-- Chapter (Optional for Textbooks / PYQs) -->
+          <div class="form-group">
+            <label for="res-chapter-select" class="form-label">Chapter</label>
+            <select id="res-chapter-select" class="form-select">
+              <option value="">-- General / No Chapter --</option>
+            </select>
+          </div>
+
+          <!-- Exam Year -->
+          <div class="form-group">
+            <label for="res-year-input" class="form-label">Exam Year</label>
+            <input type="number" id="res-year-input" class="form-control" placeholder="2024" min="2000" max="2030">
+          </div>
+
+          <!-- Marks -->
+          <div class="form-group">
+            <label for="res-marks-input" class="form-label">Marks</label>
+            <input type="number" id="res-marks-input" class="form-control" placeholder="3" min="1" max="100">
+          </div>
+        </div>
+
+        <!-- Title -->
+        <div class="form-group">
+          <label for="res-title-input" class="form-label">Resource Title *</label>
+          <input type="text" id="res-title-input" class="form-control" placeholder="e.g. Comprehensive Notes: Linear Equations" required>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="res-desc-input" class="form-label">Short Description</label>
+          <textarea id="res-desc-input" class="form-control" rows="2" placeholder="Brief summary of syllabus points covered..."></textarea>
+        </div>
+
+        <!-- File URL or PDF Link & Direct Supabase Storage Upload -->
+        <div class="form-group">
+          <label for="res-file-url-input" class="form-label">PDF File URL (Supabase Storage or external link)</label>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <input type="url" id="res-file-url-input" class="form-control" placeholder="https://... / study-materials/..." style="flex: 1;">
+            <label class="btn btn-secondary btn-sm" style="margin: 0; white-space: nowrap; cursor: pointer;" title="Upload PDF directly to Supabase study-materials bucket">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Upload PDF</span>
+              <input type="file" id="res-pdf-file-picker" accept="application/pdf" style="display: none;">
+            </label>
+          </div>
+          <div id="res-file-upload-status" style="font-size: 0.8rem; margin-top: 0.35rem; color: var(--text-muted);">
+            External URLs (e.g. eBalbharati) may be blocked by browser CORS policy. For embedded in-browser reading, upload the PDF directly to our Supabase <code>study-materials</code> bucket.
+          </div>
+        </div>
+
+        <!-- Formatted Text / Math Markdown Content -->
+        <div class="form-group">
+          <label for="res-content-input" class="form-label">
+            <span>Formatted Content / Model Solution (Supports Markdown & Math)</span>
+          </label>
+          <textarea id="res-content-input" class="form-control" rows="8" placeholder="Enter formulas, step-by-step working, or chapter notes here..."></textarea>
+        </div>
+
+        <!-- Options: Published & Allow Download -->
+        <div style="display: flex; gap: 2rem; margin-top: 1rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem;">
+            <input type="checkbox" id="res-publish-checkbox" checked>
+            <span style="font-weight: 600;">Publish to Students immediately</span>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem;">
+            <input type="checkbox" id="res-download-checkbox" checked>
+            <span>Allow Download</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('resource-modal').close()">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="save-resource-submit-btn">Save Resource</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- =====================================================================
+       MODAL 2: Chapter Editor Dialog
+       ===================================================================== -->
+  <dialog id="chapter-modal" class="modal">
+    <div class="modal-header">
+      <h3 id="chapter-modal-title">Add Chapter</h3>
+      <button class="btn btn-sm btn-ghost" onclick="document.getElementById('chapter-modal').close()">&times;</button>
+    </div>
+    <form id="chapter-modal-form">
+      <input type="hidden" id="chap-edit-id">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="chap-subject-select" class="form-label">Subject *</label>
+          <select id="chap-subject-select" class="form-select" required></select>
+        </div>
+        <div class="form-group">
+          <label for="chap-number-input" class="form-label">Chapter Number *</label>
+          <input type="number" id="chap-number-input" class="form-control" min="1" max="50" required placeholder="1">
+        </div>
+        <div class="form-group">
+          <label for="chap-title-input" class="form-label">Chapter Title *</label>
+          <input type="text" id="chap-title-input" class="form-control" required placeholder="e.g. Quadratic Equations">
+        </div>
+        <div class="form-group">
+          <label for="chap-desc-input" class="form-label">Short Description</label>
+          <textarea id="chap-desc-input" class="form-control" rows="2" placeholder="Topics covered in this chapter..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('chapter-modal').close()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Chapter</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- =====================================================================
+       MODAL 3: Subject Editor Dialog
+       ===================================================================== -->
+  <dialog id="subject-modal" class="modal">
+    <div class="modal-header">
+      <h3 id="subject-modal-title">Add Subject</h3>
+      <button class="btn btn-sm btn-ghost" onclick="document.getElementById('subject-modal').close()">&times;</button>
+    </div>
+    <form id="subject-modal-form">
+      <input type="hidden" id="sub-edit-id">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="sub-name-input" class="form-label">Subject Name *</label>
+          <input type="text" id="sub-name-input" class="form-control" required placeholder="e.g. Mathematics Part 1 (Algebra)">
+        </div>
+        <div class="form-group">
+          <label for="sub-code-input" class="form-label">Subject Code *</label>
+          <input type="text" id="sub-code-input" class="form-control" required placeholder="MATH1">
+        </div>
+        <div class="form-group">
+          <label for="sub-desc-input" class="form-label">Description</label>
+          <textarea id="sub-desc-input" class="form-control" rows="2" placeholder="Subject overview..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('subject-modal').close()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Subject</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/data/mock-seed.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/services/auth.js"></script>
+  <script src="../js/services/db.js"></script>
+  <script src="../js/services/storage.js"></script>
+  <script src="../js/utils/ui.js"></script>
+  <script src="../js/pages/admin.js"></script>
+</body>
+</html>
