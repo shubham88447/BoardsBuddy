@@ -25,6 +25,27 @@ body {
   flex-direction: column;
   transition: background-color var(--transition-normal), color var(--transition-normal);
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Constrain all embedded media & replaced elements */
+img, svg, video, canvas, audio, iframe, embed, object {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Ensure form controls do not blow out containers */
+input, button, textarea, select {
+  font: inherit;
+  max-width: 100%;
+}
+
+/* Preformatted text & code responsive scrolling */
+pre, code, kbd, samp {
+  max-width: 100%;
+  overflow-x: auto;
+  word-break: break-word;
 }
 
 /* Custom Scrollbar */
@@ -57,16 +78,20 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
   font-weight: 700;
   line-height: var(--line-height-tight);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-h1 { font-size: clamp(2rem, 4vw, 2.75rem); letter-spacing: -0.025em; }
-h2 { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -0.02em; }
-h3 { font-size: 1.25rem; }
-h4 { font-size: 1.1rem; }
+h1 { font-size: clamp(1.75rem, 4vw, 2.75rem); letter-spacing: -0.025em; }
+h2 { font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: -0.02em; }
+h3 { font-size: clamp(1.1rem, 2.5vw, 1.25rem); }
+h4 { font-size: clamp(1rem, 2vw, 1.1rem); }
 
 p {
   color: var(--text-secondary);
   line-height: var(--line-height-relaxed);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 a {
@@ -293,12 +318,13 @@ dialog.modal {
   color: var(--text-primary);
   padding: 0;
   max-width: 540px;
-  width: 90vw;
+  width: min(540px, calc(100vw - 1.5rem));
   box-shadow: var(--shadow-xl);
   margin: auto;
   position: fixed;
   inset: 0;
   z-index: 1000;
+  overflow: hidden;
 }
 
 dialog.modal::backdrop {
@@ -312,24 +338,48 @@ dialog.modal::backdrop {
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--border-subtle);
+  gap: 0.5rem;
 }
 
 .modal-body {
   padding: 1.5rem;
   max-height: 75vh;
   overflow-y: auto;
+  word-break: break-word;
 }
 
 .modal-footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--border-subtle);
   background: var(--bg-surface-muted);
   border-bottom-left-radius: var(--radius-lg);
   border-bottom-right-radius: var(--radius-lg);
+}
+
+@media (max-width: 480px) {
+  dialog.modal {
+    width: calc(100vw - 1rem);
+    border-radius: var(--radius-md);
+  }
+  .modal-header {
+    padding: 1rem 1.15rem;
+  }
+  .modal-body {
+    padding: 1.15rem;
+    max-height: 70vh;
+  }
+  .modal-footer {
+    padding: 0.85rem 1.15rem;
+    gap: 0.5rem;
+  }
+  .modal-footer .btn {
+    flex: 1 1 auto;
+  }
 }
 
 /* Toast Container */
@@ -341,8 +391,17 @@ dialog.modal::backdrop {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  max-width: 380px;
+  max-width: min(380px, calc(100vw - 2rem));
   pointer-events: none;
+}
+
+@media (max-width: 480px) {
+  #toast-container {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+  }
 }
 
 .toast {

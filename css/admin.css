@@ -284,5 +284,55 @@
   }
   .admin-main {
     margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+  .admin-topbar {
+    padding: 0 1rem;
+  }
+  .admin-content-view {
+    padding: 1.25rem 1rem;
+  }
+  .mobile-sidebar-toggle {
+    display: inline-flex !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-topbar {
+    padding: 0 0.75rem;
+  }
+  .admin-topbar #admin-user-email {
+    display: none;
+  }
+  .admin-content-view {
+    padding: 1rem 0.75rem;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .table-header-bar {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .table-header-bar .btn,
+  .table-header-bar .form-select {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+  }
+  .admin-table th,
+  .admin-table td {
+    padding: 0.65rem 0.85rem;
+    font-size: 0.825rem;
+    white-space: nowrap;
   }
 }
