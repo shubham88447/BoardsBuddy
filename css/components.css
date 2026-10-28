@@ -1327,3 +1327,38 @@ body.pdf-full-view-active {
   margin-bottom: 0.75rem;
   line-height: 1.5;
 }
+
+/* Disclaimer Bar */
+.disclaimer-bar {
+    width: 100%;
+    min-height: 30px;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+
+    background-color: #fff3c4;
+    border-top: 1px solid #f5d66e;
+    border-bottom: 1px solid #f5d66e;
+
+    color: #92400e;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+
+.disclaimer-icon {
+    flex-shrink: 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+    .disclaimer-bar {
+        font-size: 11px;
+        padding: 7px 10px;
+        gap: 5px;
+    }
+}
