@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us — BoardsBuddy</title>
+  <meta name="description" content="Learn about BoardsBuddy, a dedicated educational platform providing Maharashtra State Board Class 10 students with textbooks, notes, short notes, PYQs, and solutions.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../index.html" class="brand-logo">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <span>BoardsBuddy</span>
+        <span class="brand-badge">SSC 10</span>
+      </a>
+
+      <div class="header-actions">
+        <a href="select.html" class="board-class-pill" title="Change Board or Class">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          <span id="header-board-class-text">Maharashtra Board • Class 10</span>
+        </a>
+
+        <button class="header-search-btn" title="Search study materials (Ctrl + K)">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Search...</span>
+          <kbd class="kbd-shortcut">Ctrl K</kbd>
+        </button>
+
+        <button class="theme-toggle-btn" aria-label="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
+        <div id="header-user-actions"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Horizontal Navigation Tabs Bar -->
+  <div id="study-nav-placeholder"></div>
+
+  <!-- Main Content Container -->
+  <main class="main-container">
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="../index.html">Home</a>
+      <span class="separator">/</span>
+      <span class="current">About Us</span>
+    </nav>
+
+    <!-- Page Header Banner -->
+    <div class="page-header" style="max-width: 820px; margin: 0 auto 2.5rem; text-align: center;">
+      <div class="badge badge-primary" style="margin-bottom: 0.75rem; display: inline-block;">Empowering SSC Students</div>
+      <h1>About BoardsBuddy</h1>
+      <p style="font-size: 1.1rem; line-height: 1.6; color: var(--text-muted);">
+        A student-first educational platform engineered specifically for Maharashtra State Board Class 10 (SSC) learners.
+      </p>
+    </div>
+
+    <!-- Content Sections -->
+    <div style="max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem;">
+      
+      <!-- Mission Card -->
+      <div class="card" style="padding: 2rem; border-radius: var(--radius-lg); background: var(--surface-card); border: 1px solid var(--border-subtle);">
+        <h2 style="font-size: 1.35rem; margin-bottom: 1rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.75rem;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-500)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+          Our Purpose & Mission
+        </h2>
+        <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 1rem;">
+          BoardsBuddy was created to eliminate the friction that Maharashtra State Board Class 10 students face while preparing for their board examinations. High-quality study materials, past year papers, chapter-wise questions, and reference textbooks are often scattered across disparate websites, unorganized forum drives, or gated behind expensive paywalls.
+        </p>
+        <p style="color: var(--text-secondary); line-height: 1.7;">
+          Our mission is to bring structure, speed, and focus to your revision through a unified, fast, and modern digital study hub designed strictly around the official Maharashtra Board curriculum.
+        </p>
+      </div>
+
+      <!-- What We Provide -->
+      <div class="card" style="padding: 2rem; border-radius: var(--radius-lg); background: var(--surface-card); border: 1px solid var(--border-subtle);">
+        <h2 style="font-size: 1.35rem; margin-bottom: 1.25rem; color: var(--text-primary);">
+          What BoardsBuddy Offers
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+          
+          <div style="padding: 1.25rem; border-radius: var(--radius-md); background: var(--surface-ground); border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--primary-500);">📚</span> Official Textbooks
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+              Direct access to Balbharati e-textbooks for all core subjects, complete with an in-browser PDF reader and offline download options.
+            </p>
+          </div>
+
+          <div style="padding: 1.25rem; border-radius: var(--radius-md); background: var(--surface-ground); border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--primary-500);">📝</span> Comprehensive Notes
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+              In-depth chapter notes highlighting core conceptual theory, definitions, derivations, experiments, and exercise answers.
+            </p>
+          </div>
+
+          <div style="padding: 1.25rem; border-radius: var(--radius-md); background: var(--surface-ground); border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--primary-500);">⚡</span> Rapid Short Notes
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+              One-page revision sheets, formula cheat-sheets, key laws, and memory maps curated for last-minute exam review.
+            </p>
+          </div>
+
+          <div style="padding: 1.25rem; border-radius: var(--radius-md); background: var(--surface-ground); border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--primary-500);">🎯</span> Previous Year Papers (PYQs)
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+              Authentic Maharashtra State Board annual examination question papers from 2019 to 2024 to simulate real test timings.
+            </p>
+          </div>
+
+          <div style="padding: 1.25rem; border-radius: var(--radius-md); background: var(--surface-ground); border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--primary-500);">🔍</span> Chapter-wise PYQs
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+              Topic-targeted question banks showing historical exam trends, mark weights, and frequently repeated question patterns.
+            </p>
+          </div>
+
+          <div style="padding: 1.25rem; border-radius: var(--radius-md); background: var(--surface-ground); border: 1px solid var(--border-subtle);">
+            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--primary-500);">💡</span> Step-by-Step Solutions
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+              Exemplary model answers and marking scheme breakdowns aligned with official board evaluation rubrics.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Free for Academic Year 2025-2026 -->
+      <div class="card" style="padding: 2rem; border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%); border: 1px solid var(--primary-500);">
+        <h2 style="font-size: 1.35rem; margin-bottom: 0.75rem; color: var(--text-primary);">
+          100% Free Educational Access
+        </h2>
+        <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 0.5rem;">
+          To ensure equitable education for all students appearing for the Maharashtra SSC examinations, BoardsBuddy is providing all study materials completely free of charge for the 2025–2026 academic year. There are no hidden subscription charges or payment paywalls.
+        </p>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          To access our custom notes, short revision sheets, chapter-wise question banks, and solutions, all you need is a free student account. Textbooks and past year board papers remain publicly accessible without registration.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../index.html" class="brand-logo">
+          <div class="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <span>BoardsBuddy</span>
+        </a>
+        <p>Curated educational textbooks and resources for Maharashtra Board Class 10.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Study Resources</h4>
+        <ul class="footer-links">
+          <li><a href="textbooks.html">Textbooks</a></li>
+          <li><a href="notes.html">Notes</a></li>
+          <li><a href="short-notes.html">Short Notes</a></li>
+          <li><a href="pyqs.html">PYQs</a></li>
+          <li><a href="chapterwise-pyqs.html">Chapterwise PYQs</a></li>
+          <li><a href="pyq-solutions.html">PYQ Solutions</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>About & Legal</h4>
+        <ul class="footer-links">
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="about-us.html" style="color: var(--primary-400); font-weight: 600;">About Us</a></li>
+          <li><a href="terms-and-conditions.html">Terms and Conditions</a></li>
+          <li><a href="contact-us.html">Contact Us</a></li>
+          <li><a href="returns-refunds.html">Returns & Refunds</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>&copy; 2026 BoardsBuddy. Designed for Maharashtra Board Class 10 Students.</div>
+      <div>All Educational Resources Free for Academic Year 2025–2026.</div>
+    </div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/data/mock-seed.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/services/auth.js"></script>
+  <script src="../js/services/db.js"></script>
+  <script src="../js/utils/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      UI.init();
+    });
+  </script>
+</body>
+</html>

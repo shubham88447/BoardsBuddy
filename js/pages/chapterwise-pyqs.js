@@ -1,19 +1,26 @@
 /**
  * BoardsBuddy - Chapterwise PYQs Page Controller
- * Groups Previous-Year Questions by Chapter & Marks (Wireframe 8)
+ * Groups Previous-Year Questions by Chapter & Marks with Student Auth Guard
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
   UI.renderStudyNav('chapterwise-pyqs');
 
+  // Enforce Student Authentication
+  const isAuthed = await AuthService.requireUserAuth({
+    message: 'Please log in or create an account to access this content.'
+  });
+  if (!isAuthed) return;
+
   const dropdown = document.getElementById('ch-pyqs-subject-dropdown');
-  const pillsContainer = document.getElementById('ch-pyqs-pills-container');
+  const promptBox = document.getElementById('ch-pyqs-unselected-prompt');
   const loading = document.getElementById('ch-pyqs-loading');
   const container = document.getElementById('ch-pyqs-container');
 
   try {
     const subjects = await DbService.getSubjects();
 
+    dropdown.innerHTML = '<option value="">Choose a subject</option>';
     subjects.forEach(sub => {
       const opt = document.createElement('option');
       opt.value = sub.id;
@@ -21,26 +28,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       dropdown.appendChild(opt);
     });
 
-    pillsContainer.innerHTML = subjects.map(sub => `
-      <button class="subject-pill-btn" data-subject-id="${sub.id}">
-        <span>${sub.name.replace('Mathematics', 'Math').replace('Science & Technology', 'Science')}</span>
-      </button>
-    `).join('');
-
     async function selectSubject(subjectId) {
-      if (!subjectId) return;
+      if (!subjectId) {
+        promptBox.classList.remove('hidden');
+        container.classList.add('hidden');
+        dropdown.value = '';
+
+        const url = new URL(window.location);
+        url.searchParams.delete('subjectId');
+        url.searchParams.delete('subject');
+        window.history.replaceState({}, '', url);
+        return;
+      }
 
       dropdown.value = subjectId;
-      document.querySelectorAll('.subject-pill-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-subject-id') === subjectId);
-      });
-
+      promptBox.classList.add('hidden');
       container.classList.add('hidden');
       loading.classList.remove('hidden');
 
       const url = new URL(window.location);
       url.searchParams.set('subjectId', subjectId);
       window.history.replaceState({}, '', url);
+      localStorage.setItem(BOARDSBUDDY_CONFIG.STORAGE_KEYS.SELECTED_SUBJECT, subjectId);
 
       const [chapters, questions] = await Promise.all([
         DbService.getChapters(subjectId),
@@ -101,31 +110,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <span>Full Viewer</span>
                           </a>
                         ` : ''}
-                        <button class="btn btn-sm btn-outline toggle-q-btn" style="flex-shrink: 0;" aria-label="Toggle details">
+                        <button class="btn btn-sm btn-ghost toggle-q-btn">
                           <span>Show Details</span>
+                          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                         </button>
                       </div>
                     </div>
                     <div class="question-body">
-                      <div style="margin-bottom: 1rem; line-height: 1.6;">
-                        ${UI.formatContent(q.content_text || q.description || '')}
-                      </div>
-                      <div style="display: flex; gap: 0.5rem; justify-content: flex-end; flex-wrap: wrap;">
-                        ${hasPdf ? `
-                          <a href="${viewerUrl}" class="btn btn-sm btn-outline" title="Open attached PDF in custom viewer">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                            <span>Full Viewer</span>
-                          </a>
-                        ` : ''}
-                        <a href="pyq-solutions.html?subjectId=${subjectId}&chapterId=${ch.id}" class="btn btn-sm btn-primary">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      ${q.description ? `<p style="margin-bottom: 0.75rem; color: var(--text-secondary);">${q.description}</p>` : ''}
+                      ${q.content_text ? `
+                        <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 0.75rem;">
+                          ${UI.formatContent(q.content_text)}
+                        </div>
+                      ` : ''}
+                      <div style="display: flex; gap: 0.75rem; margin-top: 0.75rem; flex-wrap: wrap;">
+                        <a href="pyq-solutions.html?subjectId=${subjectId}#sol-${q.id}" class="btn btn-sm btn-secondary">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
                           <span>View Step-by-Step Solution</span>
                         </a>
                       </div>
                     </div>
                   </div>
-                  `;
-                }).join('')}
+                `}).join('')}
               </div>
             `}
           </div>
@@ -145,10 +151,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     dropdown.addEventListener('change', (e) => selectSubject(e.target.value));
-    pillsContainer.addEventListener('click', (e) => {
-      const btn = e.target.closest('.subject-pill-btn');
-      if (btn) selectSubject(btn.getAttribute('data-subject-id'));
-    });
 
     const urlParams = new URLSearchParams(window.location.search);
     const urlSubject = urlParams.get('subjectId') || urlParams.get('subject');
@@ -156,8 +158,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (urlSubject) {
       initialSubject = subjects.find(s => s.id === urlSubject || s.code === urlSubject);
     }
-    const initialSubjectId = initialSubject?.id || subjects[0]?.id;
-    if (initialSubjectId) selectSubject(initialSubjectId);
+
+    if (initialSubject) {
+      selectSubject(initialSubject.id);
+    } else {
+      dropdown.value = '';
+      promptBox.classList.remove('hidden');
+      container.classList.add('hidden');
+    }
 
   } catch (err) {
     console.error('Error loading chapterwise PYQs:', err);

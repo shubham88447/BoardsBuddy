@@ -327,11 +327,62 @@ const UI = (function () {
     return html;
   }
 
+  /* ==========================================================================
+     7. Protected Navigation Interceptor
+     Redirects logged-out visitors clicking protected sections to login/signup
+     ========================================================================== */
+  function initProtectedNavigation() {
+    const protectedPages = [
+      'notes.html',
+      'short-notes.html',
+      'chapterwise-pyqs.html',
+      'pyq-solutions.html',
+      '/notes',
+      '/short-notes',
+      '/chapterwise-pyqs',
+      '/pyq-solutions'
+    ];
+
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (!link) return;
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+
+      const isProtected = protectedPages.some(page => {
+        return href.endsWith(page) || href.includes(page + '?') || href.includes(page + '#') || href.includes(page + '/');
+      });
+
+      if (!isProtected) return;
+
+      if (window.AuthService && typeof window.AuthService.hasUserSessionSync === 'function') {
+        const hasSession = window.AuthService.hasUserSessionSync();
+        if (!hasSession) {
+          e.preventDefault();
+          const message = 'Please log in or create an account to access this content.';
+          const isPagesDir = window.location.pathname.includes('/pages/');
+          const authPath = isPagesDir ? 'auth.html' : 'pages/auth.html';
+
+          let targetUrl;
+          try {
+            const resolved = new URL(href, window.location.href);
+            targetUrl = resolved.pathname + resolved.search + resolved.hash;
+          } catch (_) {
+            targetUrl = href;
+          }
+
+          window.location.href = `${authPath}?redirect=${encodeURIComponent(targetUrl)}&message=${encodeURIComponent(message)}`;
+        }
+      }
+    });
+  }
+
   // Initialize on DOM load
   document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     updateHeaderContext();
     initGlobalSearch();
+    initProtectedNavigation();
 
     document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
       btn.addEventListener('click', toggleTheme);

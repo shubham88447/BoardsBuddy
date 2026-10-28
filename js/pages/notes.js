@@ -1,13 +1,18 @@
 /**
  * BoardsBuddy - Notes Page Controller
- * Manages Subject Selection (Wireframe 4) and Chapter Listing (Wireframe 5)
+ * Manages Subject Selection and Chapter Listing with Mandatory Student Authentication
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
   UI.renderStudyNav('notes');
 
+  // Enforce Student Authentication
+  const isAuthed = await AuthService.requireUserAuth({
+    message: 'Please log in or create an account to access this content.'
+  });
+  if (!isAuthed) return;
+
   const dropdown = document.getElementById('subject-dropdown');
-  const pillsContainer = document.getElementById('subject-pills-container');
   const promptBox = document.getElementById('notes-unselected-prompt');
   const loading = document.getElementById('chapters-loading');
   const chaptersContainer = document.getElementById('chapters-container');
@@ -16,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const subjects = await DbService.getSubjects();
 
     // Populate Dropdown
+    dropdown.innerHTML = '<option value="">Choose a subject</option>';
     subjects.forEach(sub => {
       const opt = document.createElement('option');
       opt.value = sub.id;
@@ -23,33 +29,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       dropdown.appendChild(opt);
     });
 
-    // Populate Quick Pills
-    pillsContainer.innerHTML = subjects.map(sub => `
-      <button class="subject-pill-btn" data-subject-id="${sub.id}">
-        <span>${sub.name.replace('Mathematics', 'Math').replace('Science & Technology', 'Science')}</span>
-      </button>
-    `).join('');
-
     // Handle Selection Change
     async function selectSubject(subjectId) {
       if (!subjectId) {
         promptBox.classList.remove('hidden');
         chaptersContainer.classList.add('hidden');
         dropdown.value = '';
-        document.querySelectorAll('.subject-pill-btn').forEach(b => b.classList.remove('active'));
+
+        const url = new URL(window.location);
+        url.searchParams.delete('subjectId');
+        url.searchParams.delete('subject');
+        window.history.replaceState({}, '', url);
         return;
       }
 
       dropdown.value = subjectId;
-      document.querySelectorAll('.subject-pill-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-subject-id') === subjectId);
-      });
-
       promptBox.classList.add('hidden');
       chaptersContainer.classList.add('hidden');
       loading.classList.remove('hidden');
 
-      // Save subject to URL and localStorage
+      // Update URL query parameter dynamically without page refresh
       const url = new URL(window.location);
       url.searchParams.set('subjectId', subjectId);
       window.history.replaceState({}, '', url);
@@ -67,13 +66,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!chapters || chapters.length === 0) {
         chaptersContainer.innerHTML = `
           <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-            <p class="text-muted">No chapters found for this subject yet. You can add chapters via the Admin Panel.</p>
+            <p class="text-muted">No chapters found for this subject yet.</p>
           </div>
         `;
         return;
       }
 
-      // Render Chapter Cards (Wireframe 5)
+      // Render Chapter Cards
       chaptersContainer.innerHTML = chapters.map(ch => {
         const matchingNote = notesResources.find(n => n.chapter_id === ch.id);
         const hasNotes = !!matchingNote;
@@ -106,33 +105,29 @@ document.addEventListener('DOMContentLoaded', async () => {
       }).join('');
     }
 
-    // Event Listeners
+    // Event Listener for Dropdown Selection
     dropdown.addEventListener('change', (e) => selectSubject(e.target.value));
 
-    pillsContainer.addEventListener('click', (e) => {
-      const btn = e.target.closest('.subject-pill-btn');
-      if (btn) selectSubject(btn.getAttribute('data-subject-id'));
-    });
-
-    // Check query params or defaults
+    // Check query params
     const urlParams = new URLSearchParams(window.location.search);
     const paramSubjectId = urlParams.get('subjectId');
     const paramSubjectCode = urlParams.get('subject');
 
     let initialSubjectId = null;
-    if (paramSubjectId) {
+    if (paramSubjectId && subjects.some(s => s.id === paramSubjectId)) {
       initialSubjectId = paramSubjectId;
     } else if (paramSubjectCode) {
       const found = subjects.find(s => s.code.toLowerCase() === paramSubjectCode.toLowerCase());
       if (found) initialSubjectId = found.id;
-    } else {
-      // Default to first subject (Mathematics Part 1) or saved
-      const saved = localStorage.getItem(BOARDSBUDDY_CONFIG.STORAGE_KEYS.SELECTED_SUBJECT);
-      initialSubjectId = saved || subjects[0]?.id;
     }
 
+    // Default: If no subject in URL, keep "Choose a subject" and show prompt
     if (initialSubjectId) {
       selectSubject(initialSubjectId);
+    } else {
+      dropdown.value = '';
+      promptBox.classList.remove('hidden');
+      chaptersContainer.classList.add('hidden');
     }
 
   } catch (err) {

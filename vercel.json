@@ -1,6 +1,23 @@
 {
   "version": 2,
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/privacy-policy", "destination": "/pages/privacy-policy.html" },
+    { "source": "/about-us", "destination": "/pages/about-us.html" },
+    { "source": "/terms-and-conditions", "destination": "/pages/terms-and-conditions.html" },
+    { "source": "/contact-us", "destination": "/pages/contact-us.html" },
+    { "source": "/returns-refunds", "destination": "/pages/returns-refunds.html" },
+    { "source": "/textbooks", "destination": "/pages/textbooks.html" },
+    { "source": "/notes", "destination": "/pages/notes.html" },
+    { "source": "/short-notes", "destination": "/pages/short-notes.html" },
+    { "source": "/pyqs", "destination": "/pages/pyqs.html" },
+    { "source": "/chapterwise-pyqs", "destination": "/pages/chapterwise-pyqs.html" },
+    { "source": "/pyq-solutions", "destination": "/pages/pyq-solutions.html" },
+    { "source": "/auth", "destination": "/pages/auth.html" },
+    { "source": "/profile", "destination": "/pages/profile.html" },
+    { "source": "/select", "destination": "/pages/select.html" },
+    { "source": "/viewer", "destination": "/pages/viewer.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

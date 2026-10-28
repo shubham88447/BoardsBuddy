@@ -291,9 +291,28 @@ create policy "Admin can delete chapters"
   on public.chapters for delete using (public.is_admin());
 
 -- Resources Policies
-create policy "Anyone can view published resources or admin can view all"
+-- 1. Unauthenticated public can only view published textbooks and pyq papers
+create policy "Public can view published textbooks and pyqs"
   on public.resources for select
-  using (is_published = true or public.is_admin());
+  using (
+    is_published = true 
+    and type in ('textbook', 'pyq')
+  );
+
+-- 2. Authenticated students can view all published resources (notes, short notes, pyqs, solutions)
+create policy "Authenticated users can view all published resources"
+  on public.resources for select
+  to authenticated
+  using (
+    is_published = true
+  );
+
+-- 3. Admins can view all resources
+create policy "Admins can view all resources"
+  on public.resources for select
+  using (
+    public.is_admin()
+  );
 
 create policy "Admin can insert resources"
   on public.resources for insert with check (public.is_admin());
@@ -329,9 +348,16 @@ on conflict (id) do update set public = true;
 
 -- Storage Policies
 drop policy if exists "Public Access for Study Materials" on storage.objects;
-create policy "Public Access for Study Materials"
+drop policy if exists "Public read access for textbooks, pyqs and thumbnails" on storage.objects;
+
+create policy "Public read access for textbooks, pyqs and thumbnails"
   on storage.objects for select
-  using (bucket_id in ('study-materials', 'chapter-thumbnails'));
+  using (
+    bucket_id = 'chapter-thumbnails'
+    or (bucket_id = 'study-materials' and (name like 'textbooks/%' or name like 'pyqs/%'))
+    or (bucket_id = 'study-materials' and auth.role() = 'authenticated')
+    or public.is_admin()
+  );
 
 drop policy if exists "Admin Upload to Study Materials" on storage.objects;
 create policy "Admin Upload to Study Materials"

@@ -71,14 +71,23 @@
 
     <!-- Subject Selector Filter Bar -->
     <div class="subject-filter-bar">
-      <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-        <label for="short-notes-subject-dropdown" class="font-semibold" style="font-size: 0.95rem;">Select Subject:</label>
-        <select id="short-notes-subject-dropdown" class="form-select" style="max-width: 100%;">
-          <option value="">-- Choose a Subject --</option>
+      <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; width: 100%; max-width: 520px;">
+        <label for="short-notes-subject-dropdown" class="font-semibold" style="font-size: 0.95rem; white-space: nowrap;">Select Subject:</label>
+        <select id="short-notes-subject-dropdown" class="form-select" style="flex: 1; min-width: 200px;">
+          <option value="">Choose a subject</option>
         </select>
       </div>
+    </div>
 
-      <div class="subject-pills-group" id="short-notes-pills-container"></div>
+    <!-- Initial Prompt / Empty State -->
+    <div id="short-notes-unselected-prompt" class="selection-card" style="margin: 2.5rem auto; max-width: 600px;">
+      <div class="selection-card-header">
+        <div class="icon-circle">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <h2>Select a Subject</h2>
+        <p>Please choose a subject to view the content.</p>
+      </div>
     </div>
 
     <!-- Loading State -->
@@ -87,7 +96,7 @@
     </div>
 
     <!-- Chapter Short Notes Grid (Wireframe 6) -->
-    <div id="short-notes-container" class="chapters-grid"></div>
+    <div id="short-notes-container" class="chapters-grid hidden"></div>
   </main>
 
   <footer class="site-footer">
@@ -103,31 +112,32 @@
       </div>
 
       <div class="footer-col">
-        <h4>Study Tabs</h4>
+        <h4>Study Resources</h4>
         <ul class="footer-links">
           <li><a href="textbooks.html">Textbooks</a></li>
           <li><a href="notes.html">Notes</a></li>
           <li><a href="short-notes.html">Short Notes</a></li>
           <li><a href="pyqs.html">PYQs</a></li>
+          <li><a href="chapterwise-pyqs.html">Chapterwise PYQs</a></li>
+          <li><a href="pyq-solutions.html">PYQ Solutions</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
-        <h4>Subjects</h4>
+        <h4>About & Legal</h4>
         <ul class="footer-links">
-          <li><a href="short-notes.html?subject=MATH1">Mathematics Part 1</a></li>
-          <li><a href="short-notes.html?subject=MATH2">Mathematics Part 2</a></li>
-          <li><a href="short-notes.html?subject=SCI1">Science Part 1</a></li>
-          <li><a href="short-notes.html?subject=SCI2">Science Part 2</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="about-us.html">About Us</a></li>
+          <li><a href="terms-and-conditions.html">Terms and Conditions</a></li>
+          <li><a href="contact-us.html">Contact Us</a></li>
+          <li><a href="returns-refunds.html">Returns & Refunds</a></li>
         </ul>
       </div>
+    </div>
 
-      <div class="footer-col">
-        <h4>Admin</h4>
-        <ul class="footer-links">
-          <li><a href="../admin/login.html">Admin Portal</a></li>
-        </ul>
-      </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 BoardsBuddy. Designed for Maharashtra Board Class 10 Students.</div>
+      <div>All Educational Resources Free for Academic Year 2025–2026.</div>
     </div>
   </footer>
 

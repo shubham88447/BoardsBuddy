@@ -41,6 +41,12 @@
   <main class="selection-wrapper">
     <div class="selection-card" style="max-width: 460px;">
       
+      <!-- Redirect / Auth Notice Message -->
+      <div id="auth-notice-banner" class="hidden" style="margin-bottom: 1.5rem; padding: 0.85rem 1rem; border-radius: var(--radius-md); background: rgba(99, 102, 241, 0.12); border: 1px solid var(--primary-500); color: var(--primary-400); display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem; line-height: 1.5;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span id="auth-notice-text">Please log in or create an account to access this content.</span>
+      </div>
+
       <!-- Tab Switcher (Login vs Sign Up) -->
       <div style="display: flex; border-bottom: 1px solid var(--border-subtle); margin-bottom: 2rem;">
         <button id="tab-login-btn" class="btn btn-ghost font-semibold" style="flex: 1; border-radius: 0; border-bottom: 2px solid var(--primary-600); color: var(--primary-600); padding: 0.65rem 0.5rem; font-size: 0.9rem;">
@@ -145,9 +151,16 @@
   </dialog>
 
   <footer class="site-footer" style="margin-top: 0; padding: 2rem 1.5rem;">
-    <div class="footer-bottom" style="margin: 0 auto; border-top: none; padding-top: 0;">
+    <div class="footer-bottom" style="margin: 0 auto; border-top: none; padding-top: 0; display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center;">
       <div>&copy; 2026 BoardsBuddy. Secure Student Authentication.</div>
-      <div><a href="../index.html">&larr; Back to Home</a></div>
+      <div style="display: flex; gap: 1.25rem; flex-wrap: wrap;">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="about-us.html">About Us</a>
+        <a href="terms-and-conditions.html">Terms and Conditions</a>
+        <a href="contact-us.html">Contact Us</a>
+        <a href="returns-refunds.html">Returns & Refunds</a>
+        <a href="../index.html">&larr; Home</a>
+      </div>
     </div>
   </footer>
 
@@ -166,6 +179,49 @@
 
       const loginError = document.getElementById('login-error');
       const signupError = document.getElementById('signup-error');
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectParam = urlParams.get('redirect');
+      const messageParam = urlParams.get('message');
+
+      // Show notice banner if redirected from protected content
+      if (messageParam) {
+        const banner = document.getElementById('auth-notice-banner');
+        const text = document.getElementById('auth-notice-text');
+        if (banner && text) {
+          text.textContent = messageParam;
+          banner.classList.remove('hidden');
+        }
+      }
+
+      function getSafeRedirectUrl() {
+        if (!redirectParam) return 'textbooks.html';
+        try {
+          const decoded = decodeURIComponent(redirectParam);
+          if (decoded.startsWith('http://') || decoded.startsWith('https://') || decoded.startsWith('//')) {
+            const parsed = new URL(decoded, window.location.origin);
+            if (parsed.origin !== window.location.origin) {
+              return 'textbooks.html';
+            }
+            return parsed.pathname + parsed.search + parsed.hash;
+          }
+          if (decoded.includes('auth.html')) {
+            return 'textbooks.html';
+          }
+          return decoded;
+        } catch (_) {
+          return 'textbooks.html';
+        }
+      }
+
+      // If already logged in, immediately redirect to safe destination
+      if (window.AuthService) {
+        window.AuthService.getCurrentUser().then(user => {
+          if (user && !messageParam) {
+            window.location.href = getSafeRedirectUrl();
+          }
+        });
+      }
 
       function switchTab(isLogin) {
         if (isLogin) {
@@ -206,8 +262,9 @@
         try {
           await AuthService.signIn(email, password);
           UI.showToast('Login successful! Redirecting...', 'success');
+          const targetUrl = getSafeRedirectUrl();
           setTimeout(() => {
-            window.location.href = 'textbooks.html';
+            window.location.href = targetUrl;
           }, 400);
         } catch (err) {
           loginError.textContent = err.message || 'Login failed. Please verify credentials.';
@@ -232,8 +289,9 @@
         try {
           await AuthService.signUp(email, password, name);
           UI.showToast('Registration successful! Welcome to BoardsBuddy.', 'success');
+          const targetUrl = getSafeRedirectUrl();
           setTimeout(() => {
-            window.location.href = 'textbooks.html';
+            window.location.href = targetUrl;
           }, 400);
         } catch (err) {
           signupError.textContent = err.message || 'Registration failed.';

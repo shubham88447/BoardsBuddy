@@ -1,13 +1,19 @@
 /**
  * BoardsBuddy - Short Notes Page Controller
- * Manages Chapter Formula Sheets & Fast Revision Cards (Wireframe 6)
+ * Manages Chapter Formula Sheets & Fast Revision Cards with Student Auth Guard
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
   UI.renderStudyNav('short-notes');
 
+  // Enforce Student Authentication
+  const isAuthed = await AuthService.requireUserAuth({
+    message: 'Please log in or create an account to access this content.'
+  });
+  if (!isAuthed) return;
+
   const dropdown = document.getElementById('short-notes-subject-dropdown');
-  const pillsContainer = document.getElementById('short-notes-pills-container');
+  const promptBox = document.getElementById('short-notes-unselected-prompt');
   const loading = document.getElementById('short-notes-loading');
   const container = document.getElementById('short-notes-container');
 
@@ -15,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const subjects = await DbService.getSubjects();
 
     // Populate Dropdown
+    dropdown.innerHTML = '<option value="">Choose a subject</option>';
     subjects.forEach(sub => {
       const opt = document.createElement('option');
       opt.value = sub.id;
@@ -22,27 +29,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       dropdown.appendChild(opt);
     });
 
-    // Populate Pills
-    pillsContainer.innerHTML = subjects.map(sub => `
-      <button class="subject-pill-btn" data-subject-id="${sub.id}">
-        <span>${sub.name.replace('Mathematics', 'Math').replace('Science & Technology', 'Science')}</span>
-      </button>
-    `).join('');
-
     async function selectSubject(subjectId) {
-      if (!subjectId) return;
+      if (!subjectId) {
+        promptBox.classList.remove('hidden');
+        container.classList.add('hidden');
+        dropdown.value = '';
+
+        const url = new URL(window.location);
+        url.searchParams.delete('subjectId');
+        url.searchParams.delete('subject');
+        window.history.replaceState({}, '', url);
+        return;
+      }
 
       dropdown.value = subjectId;
-      document.querySelectorAll('.subject-pill-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-subject-id') === subjectId);
-      });
-
+      promptBox.classList.add('hidden');
       container.classList.add('hidden');
       loading.classList.remove('hidden');
 
       const url = new URL(window.location);
       url.searchParams.set('subjectId', subjectId);
       window.history.replaceState({}, '', url);
+      localStorage.setItem(BOARDSBUDDY_CONFIG.STORAGE_KEYS.SELECTED_SUBJECT, subjectId);
 
       const [chapters, shortNotesResources] = await Promise.all([
         DbService.getChapters(subjectId),
@@ -98,26 +106,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     dropdown.addEventListener('change', (e) => selectSubject(e.target.value));
-    pillsContainer.addEventListener('click', (e) => {
-      const btn = e.target.closest('.subject-pill-btn');
-      if (btn) selectSubject(btn.getAttribute('data-subject-id'));
-    });
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramSubjectId = urlParams.get('subjectId');
     const paramSubjectCode = urlParams.get('subject');
 
     let initialSubjectId = null;
-    if (paramSubjectId) {
+    if (paramSubjectId && subjects.some(s => s.id === paramSubjectId)) {
       initialSubjectId = paramSubjectId;
     } else if (paramSubjectCode) {
       const found = subjects.find(s => s.code.toLowerCase() === paramSubjectCode.toLowerCase());
       if (found) initialSubjectId = found.id;
-    } else {
-      initialSubjectId = subjects[0]?.id;
     }
 
-    if (initialSubjectId) selectSubject(initialSubjectId);
+    if (initialSubjectId) {
+      selectSubject(initialSubjectId);
+    } else {
+      dropdown.value = '';
+      promptBox.classList.remove('hidden');
+      container.classList.add('hidden');
+    }
 
   } catch (err) {
     console.error('Error loading short notes:', err);

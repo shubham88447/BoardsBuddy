@@ -671,6 +671,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
 
+    // Access Control: Textbooks and PYQ Papers are publicly accessible without login.
+    // Notes, Short Notes, Chapter-wise PYQs, and PYQ Solutions require student authentication.
+    const effectiveType = currentResource?.type || contentType;
+    const isPublic = effectiveType === 'textbook' || effectiveType === 'pyq';
+
+    if (!isPublic) {
+      const isAuthed = await AuthService.requireUserAuth({
+        message: 'Please log in or create an account to access this content.'
+      });
+      if (!isAuthed) return;
+    }
+
     // Default subject
     if (!subjectId) {
       const subjects = await DbService.getSubjects();

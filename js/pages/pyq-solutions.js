@@ -1,19 +1,26 @@
 /**
  * BoardsBuddy - PYQ Solutions Page Controller
- * Displays step-by-step solved board questions (Wireframe 9)
+ * Displays step-by-step solved board questions with Student Auth Guard
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
   UI.renderStudyNav('pyq-solutions');
 
+  // Enforce Student Authentication
+  const isAuthed = await AuthService.requireUserAuth({
+    message: 'Please log in or create an account to access this content.'
+  });
+  if (!isAuthed) return;
+
   const dropdown = document.getElementById('solutions-subject-dropdown');
-  const pillsContainer = document.getElementById('solutions-pills-container');
+  const promptBox = document.getElementById('solutions-unselected-prompt');
   const loading = document.getElementById('solutions-loading');
   const container = document.getElementById('solutions-container');
 
   try {
     const subjects = await DbService.getSubjects();
 
+    dropdown.innerHTML = '<option value="">Choose a subject</option>';
     subjects.forEach(sub => {
       const opt = document.createElement('option');
       opt.value = sub.id;
@@ -21,26 +28,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       dropdown.appendChild(opt);
     });
 
-    pillsContainer.innerHTML = subjects.map(sub => `
-      <button class="subject-pill-btn" data-subject-id="${sub.id}">
-        <span>${sub.name.replace('Mathematics', 'Math').replace('Science & Technology', 'Science')}</span>
-      </button>
-    `).join('');
-
     async function selectSubject(subjectId) {
-      if (!subjectId) return;
+      if (!subjectId) {
+        promptBox.classList.remove('hidden');
+        container.classList.add('hidden');
+        dropdown.value = '';
+
+        const url = new URL(window.location);
+        url.searchParams.delete('subjectId');
+        url.searchParams.delete('subject');
+        window.history.replaceState({}, '', url);
+        return;
+      }
 
       dropdown.value = subjectId;
-      document.querySelectorAll('.subject-pill-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-subject-id') === subjectId);
-      });
-
+      promptBox.classList.add('hidden');
       container.classList.add('hidden');
       loading.classList.remove('hidden');
 
       const url = new URL(window.location);
       url.searchParams.set('subjectId', subjectId);
       window.history.replaceState({}, '', url);
+      localStorage.setItem(BOARDSBUDDY_CONFIG.STORAGE_KEYS.SELECTED_SUBJECT, subjectId);
 
       const [chapters, solutions] = await Promise.all([
         DbService.getChapters(subjectId),
@@ -89,14 +98,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     dropdown.addEventListener('change', (e) => selectSubject(e.target.value));
-    pillsContainer.addEventListener('click', (e) => {
-      const btn = e.target.closest('.subject-pill-btn');
-      if (btn) selectSubject(btn.getAttribute('data-subject-id'));
-    });
 
     const urlParams = new URLSearchParams(window.location.search);
-    const initialSubjectId = urlParams.get('subjectId') || subjects[0]?.id;
-    if (initialSubjectId) selectSubject(initialSubjectId);
+    const paramSubjectId = urlParams.get('subjectId');
+    const paramSubjectCode = urlParams.get('subject');
+
+    let initialSubjectId = null;
+    if (paramSubjectId && subjects.some(s => s.id === paramSubjectId)) {
+      initialSubjectId = paramSubjectId;
+    } else if (paramSubjectCode) {
+      const found = subjects.find(s => s.code.toLowerCase() === paramSubjectCode.toLowerCase());
+      if (found) initialSubjectId = found.id;
+    }
+
+    if (initialSubjectId) {
+      selectSubject(initialSubjectId);
+    } else {
+      dropdown.value = '';
+      promptBox.classList.remove('hidden');
+      container.classList.add('hidden');
+    }
 
   } catch (err) {
     console.error('Error loading PYQ solutions:', err);

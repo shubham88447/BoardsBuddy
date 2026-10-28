@@ -94,7 +94,15 @@ const AuthService = (function () {
       if (error) console.error('SignOut error:', error);
     }
     localStorage.removeItem(config.STORAGE_KEYS.USER_SESSION);
-    window.location.reload();
+
+    const protectedPages = ['notes.html', 'short-notes.html', 'chapterwise-pyqs.html', 'pyq-solutions.html', 'profile.html'];
+    const isProtected = protectedPages.some(p => window.location.pathname.includes(p));
+    if (isProtected) {
+      const isPagesDir = window.location.pathname.includes('/pages/');
+      window.location.href = isPagesDir ? 'textbooks.html' : 'pages/textbooks.html';
+    } else {
+      window.location.reload();
+    }
   }
 
   /**
@@ -159,6 +167,44 @@ const AuthService = (function () {
   }
 
   /**
+   * Synchronously check if a session token exists in local storage
+   */
+  function hasUserSessionSync() {
+    if (bridge.isLive()) {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
+          try {
+            const val = JSON.parse(localStorage.getItem(key));
+            if (val && (val.user || val.access_token)) return true;
+          } catch (_) {}
+        }
+      }
+    }
+    const local = localStorage.getItem(config.STORAGE_KEYS.USER_SESSION);
+    return !!local;
+  }
+
+  /**
+   * Protect student pages: redirects unauthenticated users to login with destination and message preserved
+   */
+  async function requireUserAuth(options = {}) {
+    if (window.location.pathname.includes('auth.html')) return true;
+
+    const user = await getCurrentUser();
+    if (!user) {
+      const message = options.message || 'Please log in or create an account to access this content.';
+      const isPagesDir = window.location.pathname.includes('/pages/');
+      const authPath = isPagesDir ? 'auth.html' : 'pages/auth.html';
+      const currentUrl = window.location.pathname + window.location.search + window.location.hash;
+      const redirectUrl = `${authPath}?redirect=${encodeURIComponent(currentUrl)}&message=${encodeURIComponent(message)}`;
+      window.location.href = redirectUrl;
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * Protect admin pages: redirects non-admin users to login immediately
    */
   async function requireAdminAuth(loginRedirectUrl = '/admin/login.html') {
@@ -192,7 +238,9 @@ const AuthService = (function () {
     signOut,
     resetPassword,
     getCurrentUser,
+    hasUserSessionSync,
     checkIsAdmin,
+    requireUserAuth,
     requireAdminAuth,
     onAuthStateChange
   };

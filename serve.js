@@ -49,6 +49,21 @@ const server = http.createServer((req, res) => {
     filePath = path.join(filePath, 'index.html');
   }
 
+  // Fallback for clean URLs (e.g. /about-us -> /pages/about-us.html or /about-us.html)
+  if (!fs.existsSync(filePath)) {
+    if (fs.existsSync(filePath + '.html')) {
+      filePath = filePath + '.html';
+    } else {
+      const pageFallback = path.join(PUBLIC_DIR, 'pages', safePath + '.html');
+      const pageDirect = path.join(PUBLIC_DIR, 'pages', safePath);
+      if (fs.existsSync(pageFallback)) {
+        filePath = pageFallback;
+      } else if (fs.existsSync(pageDirect)) {
+        filePath = pageDirect;
+      }
+    }
+  }
+
   fs.readFile(filePath, (err, data) => {
     if (err) {
       if (err.code === 'ENOENT') {

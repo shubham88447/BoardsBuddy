@@ -131,13 +131,23 @@ const DbService = (function () {
       return data;
     }
 
+    const user = window.AuthService ? await window.AuthService.getCurrentUser() : null;
+    const isAdmin = window.AuthService ? await window.AuthService.checkIsAdmin() : false;
     const resources = getLocalCollection(config.STORAGE_KEYS.MOCK_DB_RESOURCES, mockSeed.resources);
+
     return resources.filter(r => {
       if (type && r.type !== type) return false;
       if (subjectId && r.subject_id !== subjectId) return false;
       if (chapterId && r.chapter_id !== chapterId) return false;
       if (year && r.year !== parseInt(year, 10)) return false;
-      if (onlyPublished && r.is_published === false) return false;
+      if (onlyPublished && r.is_published === false && !isAdmin) return false;
+
+      // Access control: Protected types (notes, short_notes, chapterwise_pyq, pyq_solution) require authenticated user or admin
+      const isProtected = ['notes', 'short_notes', 'chapterwise_pyq', 'pyq_solution'].includes(r.type);
+      if (isProtected && !user && !isAdmin) {
+        return false;
+      }
+
       return true;
     });
   }
@@ -152,8 +162,19 @@ const DbService = (function () {
       if (error) throw error;
       return data;
     }
+    const user = window.AuthService ? await window.AuthService.getCurrentUser() : null;
+    const isAdmin = window.AuthService ? await window.AuthService.checkIsAdmin() : false;
     const resources = getLocalCollection(config.STORAGE_KEYS.MOCK_DB_RESOURCES, mockSeed.resources);
-    return resources.find(r => r.id === resourceId) || null;
+    const item = resources.find(r => r.id === resourceId) || null;
+
+    if (item) {
+      const isProtected = ['notes', 'short_notes', 'chapterwise_pyq', 'pyq_solution'].includes(item.type);
+      if (isProtected && !user && !isAdmin) {
+        return null; // Deny unauthenticated access to protected resource record
+      }
+    }
+
+    return item;
   }
 
   async function searchResources(searchTerm, subjectId = null) {
@@ -173,10 +194,17 @@ const DbService = (function () {
       return data;
     }
 
+    const user = window.AuthService ? await window.AuthService.getCurrentUser() : null;
+    const isAdmin = window.AuthService ? await window.AuthService.checkIsAdmin() : false;
     const resources = getLocalCollection(config.STORAGE_KEYS.MOCK_DB_RESOURCES, mockSeed.resources);
+
     return resources.filter(r => {
-      if (r.is_published === false) return false;
+      if (r.is_published === false && !isAdmin) return false;
       if (subjectId && r.subject_id !== subjectId) return false;
+
+      const isProtected = ['notes', 'short_notes', 'chapterwise_pyq', 'pyq_solution'].includes(r.type);
+      if (isProtected && !user && !isAdmin) return false;
+
       const titleMatch = r.title && r.title.toLowerCase().includes(term);
       const descMatch = r.description && r.description.toLowerCase().includes(term);
       const contentMatch = r.content_text && r.content_text.toLowerCase().includes(term);
