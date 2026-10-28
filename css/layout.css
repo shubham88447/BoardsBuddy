@@ -366,12 +366,12 @@
   padding-top: 1.5rem;
   border-top: 1px solid var(--border-subtle);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: stretch;
+  justify-content: center;
   font-size: 0.85rem;
   color: var(--text-muted);
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 20px;
 }
 
 /* Responsive Breakpoints */
