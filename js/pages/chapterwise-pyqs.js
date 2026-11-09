@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                           ${q.topic ? `<span class="badge badge-secondary">${q.topic}</span>` : ''}
                         </div>
                         <div class="question-title">
-                          Q${qIndex + 1}. ${q.title}
+                          ${q.title}
                         </div>
                       </div>
                       <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end;">

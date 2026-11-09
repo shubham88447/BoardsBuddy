@@ -78,7 +78,6 @@ document.addEventListener('DOMContentLoaded', async () => {
               <div>
                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
                   <span class="badge badge-warning">SSC ${sol.year || 'Exam'}</span>
-                  <span class="badge badge-primary">${sol.marks ? sol.marks + ' Marks' : 'Model Answer'}</span>
                   ${chapter ? `<span class="badge badge-secondary">Ch ${chapter.chapter_number}: ${chapter.title}</span>` : ''}
                 </div>
                 <h3 style="font-size: 1.15rem; line-height: 1.35;">${sol.title}</h3>
